@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Comment App</title>
+		<script src='http://code.jquery.com/jquery-1.11.2.js'></script>
+		<script src="https://api.cloudboost.io/sdk/js/1.0.0"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<script>
+			var appId="commentzxdsa";
+			var key="O+8b8H1/AGTC2eLh1GzXjw==";
+			var obj;
+			
+			//Initializing CloudBoost App
+			CB.CloudApp.init(appId,key,{
+				success: function(){
+					obj = new CB.CloudObject("cmmnt");
+					
+				},
+				error: function(response){
+					alert(response);
+				}
+			});
+			
+			var t = setInterval(function(){
+				CB.CloudNotification.on('sample',function(response){
+				
+				console.log('notice');
+				$("#commentlist").append("<div>"+response+"</div>");
+				},{	
+				success : function(){ 
+				
+			 	}, 
+			 	error : function(err){ 
+			 	
+			 	} 
+			 });
+			
+			 clearInterval(t);
+			 },100);
+			 
+			 var query = new CB.CloudQuery("cmmnt"); 
+			 query.find({ success: function(list){ 
+			 		for (i = 0; i < list.length; i++) { 
+			 			$("#commentlist").append("<p class='bg-info'><strong>"+list[i].get('name')+"</strong><br/>"+list[i].get('text')+"</p>");
+			 		}	
+				},
+				error: function(err){ 
+				} 
+			});
+		</script>
+		<style>
+			body{
+				margin-top:1%;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="row">
+			<!--column 1-->
+			<div class="col-sm-3">
+			</div>
+			<!--column 2-->
+			<div class="col-sm-6">
+				<div class="panel panel-info">
+				<div class="panel-heading">
+					Comment App
+				</div>
+				<div class="panel-body">
+				<div id="commentbox">
+					<form class="form-horizontal" id="commentForm">
+						<div class="form-group">
+							<label for="name" class="col-sm-2 control-label">Name</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="name" id="name" value="" placeholder="your name"></input>
+								</div>
+							</div>	
+							<div class="form-group">
+								<label for="comment" class="col-sm-2 control-label">Comment</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" value="" name="comment" id="comment" placeholder="your comment"></input>
+								</div>
+							</div>
+			
+							<div class="form-group">
+    							<div class="col-sm-offset-2 col-sm-10">	
+									<button type="submit" class="btn btn-default btn-sm">Submit</button>
+								</div>
+							</div>		
+					</form>
+				</div>
+				<hr/>
+				<div id="commentlist" >
+			 
+				</div>
+				</div>
+				</div>
+			</div>
+			<!--column 3-->
+			<div class="col-sm-2">
+			</div>
+		</div>		
+		<script>
+			$("#commentForm").submit(function() {
+			
+				obj.set("name", $("#name").val());
+				obj.set("text",$("#comment").val());
+			
+				obj.save({ success: function(obj) { 
+						CB.CloudNotification.publish('sample',"<p class='bg-info'><strong>"+$("#name").val()+"</strong><br/>"+$("#comment").val()+"</p>",{ 
+							success : function(){ 
+								console.log("published");
+							},error : function(err){
+								
+							} 
+						}); 
+			
+					},error: function(err) { 
+						alert("oops!! a problem occured while saving your comment.. please try again.");
+					}
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>
