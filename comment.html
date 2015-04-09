@@ -2,52 +2,7 @@
 <html>
 	<head>
 		<title>Comment App</title>
-		<script src='http://code.jquery.com/jquery-1.11.2.js'></script>
-		<script src="https://api.cloudboost.io/sdk/js/1.0.0"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-		<script>
-			var appId="commentzxdsa";
-			var key="O+8b8H1/AGTC2eLh1GzXjw==";
-			var obj;
-			
-			//Initializing CloudBoost App
-			CB.CloudApp.init(appId,key,{
-				success: function(){
-					obj = new CB.CloudObject("cmmnt");
-					
-				},
-				error: function(response){
-					alert(response);
-				}
-			});
-			
-			var t = setInterval(function(){
-				CB.CloudNotification.on('sample',function(response){
-				
-				console.log('notice');
-				$("#commentlist").append("<div>"+response+"</div>");
-				},{	
-				success : function(){ 
-				
-			 	}, 
-			 	error : function(err){ 
-			 	
-			 	} 
-			 });
-			
-			 clearInterval(t);
-			 },100);
-			 
-			 var query = new CB.CloudQuery("cmmnt"); 
-			 query.find({ success: function(list){ 
-			 		for (i = 0; i < list.length; i++) { 
-			 			$("#commentlist").append("<p class='bg-info'><strong>"+list[i].get('name')+"</strong><br/>"+list[i].get('text')+"</p>");
-			 		}	
-				},
-				error: function(err){ 
-				} 
-			});
-		</script>
 		<style>
 			body{
 				margin-top:1%;
@@ -99,28 +54,9 @@
 			<!--column 3-->
 			<div class="col-sm-2">
 			</div>
-		</div>		
-		<script>
-			$("#commentForm").submit(function() {
-			
-				obj.set("name", $("#name").val());
-				obj.set("text",$("#comment").val());
-			
-				obj.save({ success: function(obj) { 
-						CB.CloudNotification.publish('sample',"<p class='bg-info'><strong>"+$("#name").val()+"</strong><br/>"+$("#comment").val()+"</p>",{ 
-							success : function(){ 
-								console.log("published");
-							},error : function(err){
-								
-							} 
-						}); 
-			
-					},error: function(err) { 
-						alert("oops!! a problem occured while saving your comment.. please try again.");
-					}
-				});
-				return false;
-			});
-		</script>
+		</div>
+		<script src='http://code.jquery.com/jquery-1.11.2.js'></script>
+		<script src="https://api.cloudboost.io/sdk/js/1.0.0"></script>
+		<script src="comment.js"></script>	
 	</body>
 </html>
